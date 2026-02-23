@@ -11,5 +11,8 @@
 
         [RomTypeInfo(typeof(Yuzu.YuzuGameInfo), typeof(Yuzu.YuzuScanner))]
         Yuzu = 4,
+
+        [RomTypeInfo(typeof(RyujinxCopy.RyujinxCopyGameInfo), typeof(RyujinxCopy.RyujinxCopyScanner))]
+        RyujinxCopy = 5,
     }
 }

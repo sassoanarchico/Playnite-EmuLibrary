@@ -50,6 +50,36 @@ When a game is installed, the latest update and any DLC from the source will als
 * If the connection to the source folder's storage is unstable, Playnite may crash when when updating the library. This is unlikely to be able to be completely fixed until Playnite uses a newer .NET version (currently being targeted for Playnite 11). Some some mitigations are planned in the meantime, but are not yet implemented.
 * If the mapping is disabled or if EmuLibrary update is cancelled before the scan for the mapping completes, game installation for the mapping's games may result in an error message. This will be fixed in a later version of this addon.
 
+### RyujinxCopy
+
+The RyujinxCopy type is designed for Nintendo Switch games played via the **Ryujinx** emulator. Unlike the Yuzu type (which extracts NCAs into a NAND structure), RyujinxCopy simply copies entire game folders from source to destination, preserving the original directory layout. This is the recommended approach for Ryujinx, which can open NSP/XCI files directly.
+
+#### Expected folder structure
+
+Each game should be in its own top-level folder within the source path. A typical structure looks like:
+
+```
+E:\SwitchGames\
+├── Game Name (NSP)(EU)(Base Game)\
+│   ├── Game Name[TitleID][Region][v0].nsp          ← base game (root level)
+│   ├── Game Name[TitleID][version][Region][Update vX.Y.Z].nsp  ← update (root or subfolder)
+│   └── Game Name (DLC)\                            ← DLC subfolder
+│       └── Game Name[DLC_TitleID][Region][v0].nsp
+```
+
+The scanner automatically detects the base game file by looking for `[v0]` in the filename or a title ID ending in `000` (Switch base game convention). If neither is found, it uses the largest NSP/XCI at the root level.
+
+#### Automatic update and DLC registration
+
+When a game is installed, RyujinxCopy automatically configures Ryujinx to use the updates and DLC included in the folder:
+
+* **Updates**: Registered in `%APPDATA%\Ryujinx\games\{titleId}\updates.json`, with the highest version selected
+* **DLC**: Registered in `%APPDATA%\Ryujinx\games\{titleId}\dlc.json`, with NCA contents read from each DLC NSP
+
+If Ryujinx already has existing configuration entries (e.g. from a previous source location or manual setup), the plugin rewrites those paths to point to the installed location — preserving all NCA metadata and title IDs. This handles scenarios where the source folder has been moved between drives.
+
+When a game is uninstalled, the corresponding entries are removed from Ryujinx's configuration.
+
 ## Support
 
 To get help, check out the #extension-support channel on the Playnite Discord, linked at the top of https://playnite.link/

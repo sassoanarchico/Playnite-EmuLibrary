@@ -1,0 +1,32 @@
+2026-02-23 13:21:37.2605|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 13:21:37.2770|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\toolbox.exe"  pack C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\EmuLibrary\bin\Release\net462\ C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\
+2026-02-23 13:21:37.3485|ERROR|Playnite.Toolbox.Program|Failed to pack extension: C:\Users\paffe\OneDrive\Documenten\PLAYNITE.
+Specificato metodo non supportato.
+2026-02-23 13:21:52.6686|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 13:21:52.6791|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\toolbox.exe" pack "c:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\EmuLibrary\bin\Release\net462\" "c:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\"
+2026-02-23 13:21:52.7146|ERROR|Playnite.Toolbox.Program|Failed to pack extension: c:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\EmuLibrary\bin\Release\net462" c:\Users\paffe\OneDrive\Documenten\PLAYNITE.
+Caratteri non validi nel percorso.
+2026-02-23 13:22:14.3062|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 13:22:14.3162|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\Toolbox.exe" pack .\EmuLibrary\bin\Release\net462\ .\
+2026-02-23 13:22:14.5002|INFO|Playnite.Toolbox.Program|LibraryPlugin successfully packed as ".\ROMInstaller_41e49490-0583-4148-94d2-940c7c74f1d9_999_999_999.pext"
+2026-02-23 13:57:00.8536|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 13:57:00.8636|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\toolbox.exe"  pack C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\EmuLibrary\bin\Release\net462\ C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\
+2026-02-23 13:57:00.9026|ERROR|Playnite.Toolbox.Program|Failed to pack extension: C:\Users\paffe\OneDrive\Documenten\PLAYNITE.
+Specificato metodo non supportato.
+2026-02-23 13:57:09.5091|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 13:57:09.5189|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\Toolbox.exe" pack .\EmuLibrary\bin\Release\net462\ .\
+2026-02-23 13:57:10.2798|INFO|Playnite.Toolbox.Program|LibraryPlugin successfully packed as ".\ROMInstaller_41e49490-0583-4148-94d2-940c7c74f1d9_999_999_999.pext"
+2026-02-23 14:31:53.3335|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 14:31:53.3335|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\toolbox.exe"  pack C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\EmuLibrary\bin\Release\net462\ C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\
+2026-02-23 14:31:53.4350|ERROR|Playnite.Toolbox.Program|Failed to pack extension: C:\Users\paffe\OneDrive\Documenten\PLAYNITE.
+Specificato metodo non supportato.
+2026-02-23 14:32:01.6487|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 14:32:01.6587|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\Toolbox.exe" pack .\EmuLibrary\bin\Release\net462\ .\
+2026-02-23 14:32:02.5788|INFO|Playnite.Toolbox.Program|LibraryPlugin successfully packed as ".\ROMInstaller_41e49490-0583-4148-94d2-940c7c74f1d9_999_999_999.pext"
+2026-02-23 14:54:32.5490|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 14:54:32.5490|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\toolbox.exe"  pack C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\EmuLibrary\bin\Release\net462\ C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\
+2026-02-23 14:54:32.6480|ERROR|Playnite.Toolbox.Program|Failed to pack extension: C:\Users\paffe\OneDrive\Documenten\PLAYNITE.
+Specificato metodo non supportato.
+2026-02-23 14:54:42.1226|DEBUG|Playnite.Toolbox.Program|Toolbox started.
+2026-02-23 14:54:42.1326|DEBUG|Playnite.Toolbox.Program|"C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\emulibrary-fork\toolbox\Toolbox.exe" pack .\EmuLibrary\bin\Release\net462\ .\
+2026-02-23 14:54:43.0206|INFO|Playnite.Toolbox.Program|LibraryPlugin successfully packed as ".\ROMInstaller_41e49490-0583-4148-94d2-940c7c74f1d9_3_5_0.pext"

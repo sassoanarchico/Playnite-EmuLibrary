@@ -1,5 +1,17 @@
 AddonId: ROMInstaller_41e49490-0583-4148-94d2-940c7c74f1d9
 Packages:
+  - Version: 3.5.0
+    RequiredApiVersion: 6.4.0
+    ReleaseDate: '2026-02-23'
+    PackageUrl: https://github.com/psychonic/Playnite-EmuLibrary/releases/download/v3.5.0/EmuLibrary_41e49490-0583-4148-94d2-940c7c74f1d9_3_5_0.pext
+    Changelog:
+      - Added new RyujinxCopy ROM type for Nintendo Switch games via Ryujinx emulator
+      - RyujinxCopy copies entire game folders (base + updates + DLC) from source to destination
+      - Automatic registration of updates and DLC in Ryujinx config on install
+      - Automatic deregistration of updates and DLC from Ryujinx config on uninstall
+      - Smart path rewriting to handle moved source folders across drives
+      - Intelligent base game detection via title ID conventions and version tags
+      - Clean game name extraction from tagged folder names
   - Version: 3.4.1
     RequiredApiVersion: 6.4.0
     ReleaseDate: '2024-01-13'
