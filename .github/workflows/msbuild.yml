@@ -1,18 +1,16 @@
-name: MSBuild
+name: Build and Release .pext
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-    
-env:
-  # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: EmuLibrary.sln
+      - 'v*'
+  workflow_dispatch:
 
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+permissions:
+  contents: write
+
+env:
+  SOLUTION_FILE_PATH: EmuLibrary.sln
   BUILD_CONFIGURATION: Release
 
 jobs:
@@ -20,59 +18,69 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
-      with: 
+    - uses: actions/checkout@v4
+      with:
         fetch-depth: 20
-    
+
     - name: Get Version From Tag
       id: get_version
-      uses: battila7/get-version-action@v2
-      
-    - name: Update values.yaml
-      uses: fjogeleit/yaml-update-action@main
-      with:
-        valueFile: 'EmuLibrary/extension.yaml'
-        propertyPath: 'Version'
-        value: ${{steps.get_version.outputs.version-without-v}}
-        commitChange: false
+      shell: pwsh
+      run: |
+        if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') {
+          $version = $Matches[1]
+        } else {
+          # fallback: read from extension.yaml
+          $line = Select-String -Path "EmuLibrary/extension.yaml" -Pattern "^\s*Version\s*:" | Select-Object -First 1
+          $version = ($line.Line -split ":", 2)[1].Trim()
+        }
+        Write-Host "Version: $version"
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+        "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1
+    - name: Update extension.yaml version
+      shell: pwsh
+      run: |
+        $file = "EmuLibrary/extension.yaml"
+        $content = Get-Content $file -Raw
+        $content = $content -replace '(?m)^(\s*Version\s*:\s*).*$', "`${1}${{ env.VERSION }}"
+        Set-Content $file -Value $content -NoNewline
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
 
     - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      run: nuget restore ${{ env.SOLUTION_FILE_PATH }}
 
     - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{ env.BUILD_CONFIGURATION }} ${{ env.SOLUTION_FILE_PATH }}
 
     - name: Rename Extension Package Prefix
-      uses: Amadevus/pwsh-script@v2
-      id: pkgrename
-      with:
-        script: |
-          Get-ChildItem -File -Path '*.pext' | ForEach-Object -Process {
-            $newFullPath = Join-Path -Path $_.DirectoryName -ChildPath ($_.Name -replace '^RomInstaller_', 'EmuLibrary_')
-            Move-Item -Path $_.FullName -Destination $newFullPath
-          }
-      
+      shell: pwsh
+      run: |
+        Get-ChildItem -File -Path '*.pext' | ForEach-Object {
+          $newName = $_.Name -replace '^RomInstaller_', 'EmuLibrary_'
+          $newPath = Join-Path $_.DirectoryName $newName
+          Move-Item -Path $_.FullName -Destination $newPath
+          Write-Host "Renamed: $($_.Name) -> $newName"
+        }
+
     - name: Build Changelog
       id: github_release
-      uses: mikepenz/release-changelog-builder-action@v4
+      uses: mikepenz/release-changelog-builder-action@v5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         commitMode: true
 
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        name: Release ${{steps.get_version.outputs.version}}
-        body: ${{steps.github_release.outputs.changelog}}
+        name: EmuLibrary v${{ env.VERSION }}
+        body: ${{ steps.github_release.outputs.changelog }}
         generate_release_notes: true
         files: "*.pext"
         fail_on_unmatched_files: true
