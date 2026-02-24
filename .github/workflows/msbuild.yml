@@ -2,8 +2,9 @@ name: Build and Release .pext
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 permissions:
@@ -77,8 +78,8 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
       with:
+        tag_name: v${{ env.VERSION }}
         name: EmuLibrary v${{ env.VERSION }}
         body: ${{ steps.github_release.outputs.changelog }}
         generate_release_notes: true
