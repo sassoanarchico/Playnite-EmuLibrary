@@ -71,6 +71,7 @@ jobs:
     - name: Build Changelog
       id: github_release
       uses: mikepenz/release-changelog-builder-action@v5
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -81,7 +82,7 @@ jobs:
       with:
         tag_name: v${{ env.VERSION }}
         name: EmuLibrary v${{ env.VERSION }}
-        body: ${{ steps.github_release.outputs.changelog }}
+        body: ${{ steps.github_release.outputs.changelog || 'Initial release' }}
         generate_release_notes: true
         files: "*.pext"
         fail_on_unmatched_files: true
