@@ -1,0 +1,100 @@
+name: Build and Release .pext
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SOLUTION_FILE_PATH: EmuLibrary.sln
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  build:
+    runs-on: windows
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 20
+
+    - name: Get Version
+      id: get_version
+      shell: pwsh
+      run: |
+        if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') {
+          $version = $Matches[1]
+        } else {
+          $line = Select-String -Path "EmuLibrary/extension.yaml" -Pattern "^\s*Version\s*:" | Select-Object -First 1
+          $version = ($line.Line -split ":", 2)[1].Trim()
+        }
+        Write-Host "Version: $version"
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+    - name: Update extension.yaml version
+      shell: pwsh
+      run: |
+        $file = "EmuLibrary/extension.yaml"
+        $content = Get-Content $file -Raw
+        $content = $content -replace '(?m)^(\s*Version\s*:\s*).*$', "`${1}${{ env.VERSION }}"
+        Set-Content $file -Value $content -NoNewline
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+
+    - name: Restore NuGet packages
+      run: nuget restore ${{ env.SOLUTION_FILE_PATH }}
+
+    - name: Build
+      run: msbuild /m /p:Configuration=${{ env.BUILD_CONFIGURATION }} ${{ env.SOLUTION_FILE_PATH }}
+
+    - name: Rename Extension Package Prefix
+      shell: pwsh
+      run: |
+        Get-ChildItem -File -Path '*.pext' | ForEach-Object {
+          $newName = $_.Name -replace '^RomInstaller_', 'EmuLibrary_'
+          Move-Item -Path $_.FullName -Destination (Join-Path $_.DirectoryName $newName)
+          Write-Host "Renamed: $($_.Name) -> $newName"
+        }
+
+    - name: Create Gitea Release and upload .pext
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $tag = "v${{ env.VERSION }}"
+        $baseUrl = "${{ github.server_url }}/api/v1"
+        $repo = "${{ github.repository }}"
+        $headers = @{ "Authorization" = "token ${{ github.token }}"; "Content-Type" = "application/json" }
+
+        # Create release if not exists
+        try {
+          $rel = Invoke-RestMethod -Uri "$baseUrl/repos/$repo/releases/tags/$tag" -Headers $headers
+          $releaseId = $rel.id
+        } catch {
+          $body = @{ tag_name = $tag; name = "EmuLibrary $tag"; body = "Automated release"; draft = $false; prerelease = $false } | ConvertTo-Json
+          $rel = Invoke-RestMethod -Uri "$baseUrl/repos/$repo/releases" -Method POST -Headers $headers -Body $body
+          $releaseId = $rel.id
+        }
+
+        # Upload all .pext files
+        $pextFiles = Get-ChildItem -File -Path "*.pext"
+        foreach ($pext in $pextFiles) {
+          $assets = Invoke-RestMethod -Uri "$baseUrl/repos/$repo/releases/$releaseId/assets" -Headers @{ "Authorization" = "token ${{ github.token }}" }
+          $existing = $assets | Where-Object { $_.name -eq $pext.Name }
+          if ($existing) {
+            Invoke-RestMethod -Uri "$baseUrl/repos/$repo/releases/$releaseId/assets/$($existing.id)" -Method DELETE -Headers @{ "Authorization" = "token ${{ github.token }}" }
+          }
+
+          $uploadUrl = "$baseUrl/repos/$repo/releases/$releaseId/assets?name=$($pext.Name)"
+          $bytes = [System.IO.File]::ReadAllBytes($pext.FullName)
+          Invoke-RestMethod -Uri $uploadUrl -Method POST -Headers @{ "Authorization" = "token ${{ github.token }}" } -ContentType "application/octet-stream" -Body $bytes
+          Write-Host "Uploaded $($pext.Name)"
+        }
